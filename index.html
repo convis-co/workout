@@ -34,7 +34,7 @@
     --radius-sm: 12px;
   }
   *{box-sizing:border-box;margin:0;padding:0}
-  html,body{height:100%}
+  html,body{height:100%;overflow-x:hidden}
   body{
     font-family:'Bricolage Grotesque', system-ui, sans-serif;
     background:var(--bg-0);
@@ -604,29 +604,88 @@
     }
     .sidebar.open{transform:translateX(0);box-shadow:0 0 60px rgba(0,0,0,.7)}
     .menu-toggle{display:inline-flex}
-    main{padding:20px 18px}
-    .greeting h1{font-size:32px}
-    .topbar{flex-direction:column;align-items:stretch}
-    .stats{grid-template-columns:repeat(2,1fr);gap:14px}
-    .stat-icon{width:40px;height:40px;font-size:18px}
+    main{padding:16px 14px;max-width:100%;overflow-x:hidden}
+    .greeting h1{font-size:30px;line-height:1.1}
+    .topbar{flex-direction:column;align-items:stretch;gap:14px;margin-bottom:20px}
+    .stats{
+      grid-template-columns:repeat(4, 1fr);
+      gap:8px;
+    }
+    .stat{
+      flex-direction:column;align-items:flex-start;gap:8px;
+      padding:12px 10px;
+      background:var(--bg-2);
+      border-radius:12px;
+      border:1px solid var(--line-soft);
+    }
+    .stat-icon{width:36px;height:36px;font-size:16px;border-radius:10px}
+    .stat-icon svg{width:18px;height:18px}
+    .stat-label{font-size:9px;letter-spacing:0.08em}
     .stat-value{font-size:18px}
-    .today-title{font-size:24px}
-    .card{padding:18px}
+    .stat-sub{font-size:9px;letter-spacing:0.05em}
+    .overview-card{padding:16px}
+    .overview-card .card-title{margin-bottom:12px}
+
+    .today-card{padding:18px}
+    .today-header{flex-wrap:wrap;gap:8px}
+    .today-header > div:first-child{flex:1;min-width:0}
+    .today-title{
+      font-size:24px;line-height:1.15;flex-wrap:wrap;
+      gap:8px;
+    }
+    .today-focus{font-size:13px;line-height:1.4}
+    .today-meta{gap:6px;margin-bottom:18px}
+    .meta-chip{font-size:11px;padding:6px 10px}
+    #editTodayBtn{
+      padding:7px 10px;font-size:12px;flex-shrink:0;
+    }
+
+    .card{padding:16px}
     .ex-row{
       grid-template-columns:auto 1fr auto;
-      gap:12px;padding:12px;
+      gap:10px;padding:11px 12px;
     }
     .ex-num{display:none}
     .ex-actions .icon-btn:not(.menu-btn){display:none}
+    .ex-name{font-size:14px}
+    .ex-detail{font-size:11px;line-height:1.35;word-break:break-word}
+    .check{width:24px;height:24px;border-radius:7px}
+    .check svg{width:12px;height:12px}
+
     .modal{padding:22px}
     .field-row{grid-template-columns:1fr}
+
     .ring-wrap{width:150px;height:150px}
     .ring-pct{font-size:30px}
+
+    .bmi-card{padding:16px}
+    .bmi-status{font-size:26px}
+    .bmi-desc{font-size:13px}
+    .height-control{flex-wrap:wrap;font-size:12px;padding:6px 10px}
+    .height-control input{width:42px;font-size:12px}
+
+    .day-tabs{gap:4px}
+    .day-tab{padding:8px 14px;font-size:12px}
+
+    .weight-input-row{flex-wrap:wrap}
+    .weight-input{font-size:14px;padding:10px 12px}
+
+    /* Push side col below main on mobile (already handled by 1100px breakpoint) */
+    .grid-main{gap:14px}
+    .side-col{gap:14px}
   }
   @media (max-width: 420px){
-    .stats{grid-template-columns:1fr 1fr;gap:10px}
-    .meta-chip{font-size:11px;padding:6px 10px}
-    .greeting h1{font-size:28px}
+    .stats{grid-template-columns:repeat(4, 1fr);gap:6px}
+    .stat{padding:10px 6px}
+    .stat-icon{width:30px;height:30px}
+    .stat-icon svg{width:15px;height:15px}
+    .stat-value{font-size:16px}
+    .stat-label{font-size:8px}
+    .stat-sub{font-size:8px}
+    .meta-chip{font-size:10px;padding:5px 9px}
+    .greeting h1{font-size:26px}
+    .today-title{font-size:22px}
+    main{padding:14px 12px}
   }
 
   /* Backdrop for mobile menu */
@@ -647,6 +706,25 @@
     padding:24px;
   }
   .auth-screen.show{display:flex}
+
+  /* Loading splash — shown briefly while we check auth state */
+  .auth-loading{
+    position:fixed;inset:0;z-index:201;
+    background:var(--bg-0);
+    display:flex;align-items:center;justify-content:center;
+    flex-direction:column;gap:20px;
+  }
+  .auth-loading.hidden{display:none}
+  .auth-loading-mark{
+    width:54px;height:54px;border-radius:14px;
+    background:var(--grad);
+    display:grid;place-items:center;
+    font-weight:800;font-size:24px;color:white;
+    box-shadow:var(--shadow-glow);
+    letter-spacing:-0.05em;
+    animation:pulseScale 1.4s ease infinite;
+  }
+  @keyframes pulseScale{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(.92);opacity:.7}}
   .auth-screen::before{
     content:"";position:absolute;inset:0;
     background-image:
@@ -781,6 +859,11 @@
     </linearGradient>
   </defs>
 </svg>
+
+<!-- Auth Loading Splash (shown during initial auth check) -->
+<div class="auth-loading" id="authLoading">
+  <div class="auth-loading-mark">T</div>
+</div>
 
 <!-- Auth Screen -->
 <div class="auth-screen" id="authScreen">
@@ -1019,7 +1102,7 @@
     <section class="view" id="view-workouts">
       <div class="topbar">
         <div class="greeting">
-          <button class="menu-toggle" aria-label="Menu" onclick="toggleMenu()" style="margin-bottom:12px">
+          <button class="menu-toggle" aria-label="Menu" style="margin-bottom:12px">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
           </button>
           <h1>Manage <span class="accent">Workouts</span></h1>
@@ -1037,7 +1120,7 @@
     <section class="view" id="view-weight">
       <div class="topbar">
         <div class="greeting">
-          <button class="menu-toggle" aria-label="Menu" onclick="toggleMenu()" style="margin-bottom:12px">
+          <button class="menu-toggle" aria-label="Menu" style="margin-bottom:12px">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
           </button>
           <h1>Weight <span class="accent">Tracker</span></h1>
@@ -1064,7 +1147,7 @@
     <section class="view" id="view-history">
       <div class="topbar">
         <div class="greeting">
-          <button class="menu-toggle" aria-label="Menu" onclick="toggleMenu()" style="margin-bottom:12px">
+          <button class="menu-toggle" aria-label="Menu" style="margin-bottom:12px">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
           </button>
           <h1>Workout <span class="accent">History</span></h1>
@@ -1148,7 +1231,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {
   getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult,
-  onAuthStateChanged, signOut
+  onAuthStateChanged, signOut, setPersistence, browserLocalPersistence, indexedDBLocalPersistence
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import {
   getFirestore, doc, getDoc, setDoc, onSnapshot, enableIndexedDbPersistence
@@ -1181,6 +1264,11 @@ if(isConfigured){
     firebaseApp = initializeApp(FIREBASE_CONFIG);
     auth = getAuth(firebaseApp);
     db = getFirestore(firebaseApp);
+    // Force persistent sign-in across page refreshes and browser restarts.
+    // Try IndexedDB first (most durable), fall back to localStorage.
+    setPersistence(auth, indexedDBLocalPersistence).catch(()=>{
+      return setPersistence(auth, browserLocalPersistence);
+    }).catch(err => console.warn('Persistence setup failed:', err));
     // Enable offline persistence so the app works without internet
     enableIndexedDbPersistence(db).catch(err => {
       if(err.code !== 'failed-precondition' && err.code !== 'unimplemented'){
@@ -2237,7 +2325,10 @@ function toggleMenu(){
   document.getElementById('sidebar').classList.toggle('open');
   document.getElementById('navBackdrop').classList.toggle('show');
 }
-document.getElementById('menuToggle').onclick = toggleMenu;
+// Wire up ALL menu-toggle buttons across all tabs
+document.querySelectorAll('.menu-toggle').forEach(btn => {
+  btn.onclick = toggleMenu;
+});
 document.getElementById('navBackdrop').onclick = toggleMenu;
 
 /* ---- Helpers ---- */
@@ -2410,14 +2501,15 @@ document.getElementById('skipAuthBtn').onclick = ()=>{
 
 if(!isConfigured){
   // Run in local-only mode (still works), but show config warning over auth
+  document.getElementById('authLoading').classList.add('hidden');
   showAuthScreen();
 } else {
-  // Wait for auth state before rendering
-  showAuthScreen();
+  // Wait for auth state before rendering — splash stays visible until we know
   // Handle redirect result (in case popup was blocked and redirect was used)
   getRedirectResult(auth).catch(e => console.warn('Redirect result error:', e));
 
   onAuthStateChanged(auth, async (user)=>{
+    document.getElementById('authLoading').classList.add('hidden');
     if(user){
       currentUser = user;
       setUserDisplay(user);
